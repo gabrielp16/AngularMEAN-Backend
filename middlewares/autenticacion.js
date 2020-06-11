@@ -5,7 +5,7 @@ var SEED = require('../config/config').SEED;
 // =================================
 //  Verificar token
 // =================================
-exports.verficarToken = function (req, res, next) {
+exports.verificarToken = function (req, res, next) {
     var token = req.query.token;
 
     jwt.verify(token, SEED, (err, decoded) => {
