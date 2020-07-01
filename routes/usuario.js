@@ -18,7 +18,7 @@ app.get('/', (req, res, next) => {
 
     var paginacion = 5;
 
-    Usuario.find({}, 'nombre email img role') // Campos que se desean mostrar
+    Usuario.find({}, 'nombre email img role google') // Campos que se desean mostrar
         .skip(desde)
         .limit(paginacion)
         .exec(
