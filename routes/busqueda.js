@@ -61,10 +61,13 @@ app.get('/todo/:busqueda', (req, res, next) => {
     var busqueda = req.params.busqueda;
     var regex = new RegExp(busqueda, 'i');
 
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+
     Promise.all([
-        buscarHospitales(busqueda, regex),
-        buscarMedicos(busqueda, regex),
-        buscarUsuarios(busqueda, regex)
+        buscarHospitales(busqueda, regex, desde),
+        buscarMedicos(busqueda, regex, desde),
+        buscarUsuarios(busqueda, regex, desde)
     ]).then(respuestas => {
         res.status(200).json({
             ok: true,
@@ -81,12 +84,15 @@ app.get('/todo/:busqueda', (req, res, next) => {
 //  Promesas para cada coleccion
 // =================================
 
-function buscarHospitales(busqueda, regex) {
+function buscarHospitales(busqueda, regex, desde) {
 
     return new Promise((resolve, reject) => {
 
-        Hospital
-            .find({ nombre: regex })
+        var paginacion = 5;
+
+        Hospital.find({ nombre: regex })
+            .skip(desde)
+            .limit(paginacion)
             .populate('usuario', 'nombre email')
             .exec((err, hospitales) => {
                 if (err) {
@@ -100,12 +106,15 @@ function buscarHospitales(busqueda, regex) {
 
 };
 
-function buscarMedicos(busqueda, regex) {
+function buscarMedicos(busqueda, regex, desde) {
 
     return new Promise((resolve, reject) => {
 
-        Medico
-            .find({ nombre: regex })
+        var paginacion = 5;
+
+        Medico.find({ nombre: regex })
+            .skip(desde)
+            .limit(paginacion)
             .populate('usuario', 'nombre email')
             .populate('hospital')
             .exec((err, medicos) => {
@@ -120,12 +129,15 @@ function buscarMedicos(busqueda, regex) {
 
 };
 
-function buscarUsuarios(busqueda, regex) {
+function buscarUsuarios(busqueda, regex, desde) {
 
     return new Promise((resolve, reject) => {
 
-        Usuario
-            .find({}, 'nombre email role')
+        var paginacion = 5;
+
+        Usuario.find({}, 'nombre email role')
+            .skip(desde)
+            .limit(paginacion)
             .or([
                 { 'nombre': regex },
                 { 'email': regex }

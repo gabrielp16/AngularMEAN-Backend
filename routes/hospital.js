@@ -14,7 +14,8 @@ app.get('/', (req, res, next) => {
     var desde = req.query.desde || 0;
     desde = Number(desde);
 
-    var paginacion = 5;
+    var paginacion = req.query.paginacion || 5;
+    paginacion = Number(paginacion);
 
     Hospital.find({}) // Campos que se desean mostrar
         .skip(desde)
