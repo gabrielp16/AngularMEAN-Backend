@@ -73,7 +73,8 @@ app.post('/google', async (req, res) => {
                     mensaje: 'Login correcto',
                     usuario: usuarioDB,
                     token: token,
-                    id: usuarioDB._id
+                    id: usuarioDB._id,
+                    menu: obtenerMenu(usuarioDB.role)
                 });
             }
 
@@ -88,15 +89,16 @@ app.post('/google', async (req, res) => {
             usuario.google = googleUser.google;
             usuario.password = ':)';
 
-            usuario.save((err, usuarioDB) => {
-                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 }); //expiresIn: 4 horas
+            usuario.save((err, usuario) => {
+                var token = jwt.sign({ usuario: usuario }, SEED, { expiresIn: 14400 }); //expiresIn: 4 horas
 
                 res.status(200).json({
                     ok: true,
                     mensaje: 'Login correcto',
-                    usuario: usuarioDB,
+                    usuario: usuario,
                     token: token,
-                    id: usuarioDB._id
+                    id: usuario._id,
+                    menu: obtenerMenu(usuario.role)
                 });
             });
         }
@@ -152,10 +154,40 @@ app.post('/', (req, res) => {
             mensaje: 'Login correcto',
             usuario: usuarioDB,
             token: token,
-            id: usuarioDB._id
+            id: usuarioDB._id,
+            menu: obtenerMenu(usuarioDB.role)
         });
     });
 });
 
+function obtenerMenu(ROLE) {
+
+    var menu = [
+        {
+            titulo: 'Principal',
+            icono: 'mdi mdi-gauge',
+            submenu: [
+                { titulo: 'Dashboard', url: '/dashboard' },
+                { titulo: 'ProgressBar', url: '/progress' },
+                { titulo: 'Promesas', url: '/promesas' },
+                { titulo: 'Rxjs', url: '/rxjs-demo' },
+                { titulo: 'Graficas', url: '/graficas1' }
+            ]
+        },
+        {
+            titulo: 'Mantenimientos',
+            icono: 'mdi mdi-folder-lock-open',
+            submenu: []
+        }
+    ];
+
+    if (ROLE === 'ADMIN_ROLE') {
+        menu[1].submenu.unshift({ titulo: 'Medicos', url: '/medicos' });
+        menu[1].submenu.unshift({ titulo: 'Hospitales', url: '/hospitales' });
+        menu[1].submenu.unshift({ titulo: 'Usuarios', url: '/usuarios' });
+    }
+
+    return menu;
+}
 
 module.exports = app;

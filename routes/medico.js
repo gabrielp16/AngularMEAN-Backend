@@ -6,6 +6,7 @@ var app = express();
 
 
 var Medico = require('../models/medico');
+const hospital = require('../models/hospital');
 
 // =================================
 //  Obtener todos los medico
@@ -33,7 +34,7 @@ app.get('/', (req, res, next) => {
                     });
                 }
 
-                Medico.count({}, (err, conteo) => {
+                Medico.countDocuments({}, (err, conteo) => {
 
                     res.status(200).json({
                         ok: true,
@@ -44,6 +45,44 @@ app.get('/', (req, res, next) => {
                 });
 
             });
+});
+
+// =================================
+//  Obtener un medico por el id
+// =================================
+app.get('/:idMedico', (req, res) => {
+
+    var id = req.params.idMedico;
+
+    Medico.findById(id)
+        .populate('usuario', 'nombre, email, img')
+        .populate('hospital')
+        .exec((err, medico) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error al buscar un medico',
+                    errors: err
+                });
+            }
+
+            if (!medico) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'El medico con el id ' + id + ' no existe.',
+                    errors: {
+                        message: 'No existe un medico con ese ID'
+                    }
+                });
+            }
+
+            res.status(200).json({
+                ok: true,
+                medico: medico
+            });
+        })
+
 });
 
 

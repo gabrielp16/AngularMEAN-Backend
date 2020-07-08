@@ -11,7 +11,7 @@ var Usuario = require('../models/usuario');
 // =================================
 //  Obtener todos los usuarios
 // =================================
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
 
     var desde = req.query.desde || 0;
     desde = Number(desde);
@@ -32,7 +32,7 @@ app.get('/', (req, res, next) => {
                     });
                 }
 
-                Usuario.count({}, (err, conteo) => {
+                Usuario.countDocuments({}, (err, conteo) => {
 
                     res.status(200).json({
                         ok: true,
@@ -49,7 +49,7 @@ app.get('/', (req, res, next) => {
 // =================================
 //  Actualizar un usuario por el id
 // =================================
-app.put('/:idUsuario', mdAutenticacion.verificarToken, (req, res) => {
+app.put('/:idUsuario', [mdAutenticacion.verificarToken, mdAutenticacion.verificarADMIN_ROLE_o_Mismo_Usuario], (req, res) => {
 
     var id = req.params.idUsuario;
     var body = req.body;
@@ -140,7 +140,7 @@ app.post('/', (req, res) => {
 // =================================
 //  ELimiar un usuario por el id
 // =================================
-app.delete('/:idUsuario', mdAutenticacion.verificarToken, (req, res) => {
+app.delete('/:idUsuario', [mdAutenticacion.verificarToken, mdAutenticacion.verificarADMIN_ROLE], (req, res) => {
 
     var id = req.params.idUsuario;
 

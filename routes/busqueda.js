@@ -88,12 +88,12 @@ function buscarHospitales(busqueda, regex, desde) {
 
     return new Promise((resolve, reject) => {
 
-        var paginacion = 5;
+        var paginacion = 0;
 
         Hospital.find({ nombre: regex })
             .skip(desde)
             .limit(paginacion)
-            .populate('usuario', 'nombre email')
+            .populate('usuario', 'nombre email img')
             .exec((err, hospitales) => {
                 if (err) {
                     reject('Error al cargar hospitales', err);
@@ -110,12 +110,12 @@ function buscarMedicos(busqueda, regex, desde) {
 
     return new Promise((resolve, reject) => {
 
-        var paginacion = 5;
+        var paginacion = 0;
 
         Medico.find({ nombre: regex })
             .skip(desde)
             .limit(paginacion)
-            .populate('usuario', 'nombre email')
+            .populate('usuario', 'nombre email img')
             .populate('hospital')
             .exec((err, medicos) => {
                 if (err) {
@@ -133,9 +133,9 @@ function buscarUsuarios(busqueda, regex, desde) {
 
     return new Promise((resolve, reject) => {
 
-        var paginacion = 5;
+        var paginacion = 0;
 
-        Usuario.find({}, 'nombre email role')
+        Usuario.find({}, 'nombre email role img')
             .skip(desde)
             .limit(paginacion)
             .or([
