@@ -9,6 +9,22 @@ var app = express();
 
 var Usuario = require('../models/usuario');
 
+var mdAutenticacion = require('../middlewares/autenticacion');
+
+// =================================
+//  Autenticacion con Google
+// =================================
+
+app.get('/renuevatoken', mdAutenticacion.verificarToken, (req, res) => {
+
+    var token = jwt.sign({ usuario: req.usuario }, SEED, { expiresIn: 14400 }); //expiresIn: 4 horas
+
+    res.status(200).json({
+        ok: true,
+        token: token
+    });
+});
+
 // =================================
 //  Autenticacion con Google
 // =================================
